@@ -1,25 +1,15 @@
 import express from 'express'
 import fetch from 'node-fetch'
-import fs from 'fs'
-import { loadPNG, getTopNColorsPNG } from './lib/top_colors_png.js'
-import { loadJPEG, getTopNColorsJPEG } from './lib/top_colors_jpeg.js'
 import cors from 'cors'
-const app = express()
-app.use(cors())
-app.use(express.json())
+import fs from 'fs'
 
-/**
- * @param {Buffer} bytes 
- */
-const bytesAreJPEG = (bytes) => bytes[0] === 0xFF && bytes[1] === 0xD8
+import { loadPNG, getTopNColorsPNG, bytesArePNG } from './lib/top_colors_png.js'
+import { loadJPEG, getTopNColorsJPEG, bytesAreJPEG } from './lib/top_colors_jpeg.js'
 
-/**
- * @param {Buffer} bytes 
- */
-const bytesArePNG = (bytes) => (
-    bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47 && 
-    bytes[4] === 0x0D && bytes[5] === 0x0A && bytes[6] === 0x1A && bytes[7] === 0x0A
-)
+const port = 8080;
+const app = express();
+app.use(cors());
+app.use(express.json());
 
 app.post("/colors", async (req,res)=>{
     let n = Number(req.query.n) || 5
@@ -68,6 +58,4 @@ app.post("/colors", async (req,res)=>{
 
 })
 
-app.listen(8080,()=>{
-    console.log("listening on 8080")
-})
+app.listen(port,() => console.log(`server listening on port :${port}`));
